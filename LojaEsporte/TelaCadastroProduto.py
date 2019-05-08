@@ -6,6 +6,7 @@ class TelaCadastroProduto(Window):
     NOME_ARQUIVO = 'produtos.csv'
     APPEND_TO_FILE = 'a'
     READ_FILE = 'r'
+    WRITE = 'w'
     produtos_map = {
         0: 'Vestuario',
         1: 'Calcados',
@@ -13,23 +14,24 @@ class TelaCadastroProduto(Window):
         3: 'Equipamentos'
     }
 
+
     def __init__(self):
         wpf.LoadComponent(self, 'TelaCadastroProduto.xaml')
+        self.id = None
         self.listar()
 
 
     def limpar(self, sender, e):
-        self.txtNome.Text = '';
-        self.txtPreco.Text = '';
-        self.txtDescricao.Text = '';
+        self.txtNome.Text = ''
+        self.txtPreco.Text = ''
+        self.txtDescricao.Text = ''
         self.cbCategoria.SelectedIndex = -1
         self.txtNome.Focus()
         pass
 
     
     def salvar(self, sender, e):
-        produto = Produto(self.txtNome.Text, self.txtPreco.Text, 
-                          self.txtDescricao.Text, self.cbCategoria.SelectedIndex);
+        produto = Produto(self.txtNome.Text, self.txtPreco.Text, self.txtDescricao.Text, self.cbCategoria.SelectedIndex)
         try:
             self.validar_produto(produto)
             file = open(self.NOME_ARQUIVO, self.APPEND_TO_FILE)
@@ -46,20 +48,17 @@ class TelaCadastroProduto(Window):
 
 
     def validar_produto(self, produto):
-        result = None
         if (len(produto.nome.strip()) == 0):
-            raise Exception('Informe um nome!');
+            raise Exception('Informe um nome!')
 
         if (len(produto.preco.strip()) == 0):
-            raise Exception('Informe um preco!\n');
+            raise Exception('Informe um preco!\n')
 
         if (len(produto.descricao.strip()) == 0):
-            raise Exception('Informe uma descricao!');
+            raise Exception('Informe uma descricao!')
 
         if (produto.categoria < 0):
-            raise Exception('Informe uma categoria!');
-
-        return result
+            raise Exception('Informe uma categoria!')
 
 
     def listar(self):
@@ -90,6 +89,21 @@ class TelaCadastroProduto(Window):
             self.lvProdutos.Items.Refresh()
         pass
         
+    
     def editar(self, sender, e):
-        pass
+        index = self.lvProdutos.SelectedIndex
+        if (index > -1):
+            produto = self.lvProdutos.ItemsSource[index]
+            self.txtNome.Text = produto.nome
+            self.txtPreco.Text = produto.preco
+            self.txtDescricao.Text = produto.descricao
+            categoria = -1
+            for k, v in self.produtos_map.iteritems():
+                if (v == produto.categoria):
+                    categoria = k
 
+            self.cbCategoria.SelectedIndex = categoria
+        else:
+            MessageBox.Show('Selecione um produto!')
+
+        pass

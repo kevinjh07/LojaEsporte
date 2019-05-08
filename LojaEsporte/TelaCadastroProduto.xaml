@@ -20,7 +20,9 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" FocusManager.FocusedElement="{Binding ElementName=txtNome}">
+        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" 
+                    FocusManager.FocusedElement="{Binding ElementName=txtNome}"
+                    Margin="10">
             <Label Content="Nome:" Style="{StaticResource LabelStyle}"/>
             <TextBox x:Name="txtNome" Style="{StaticResource TextBoxStyle}"/>
 
@@ -28,7 +30,7 @@
             <TextBox x:Name="txtPreco" Style="{StaticResource TextBoxStyle}"/>
             
             <Label Content="Descrição:" Style="{StaticResource LabelStyle}"/>
-            <TextBox x:Name="txtDescricao" Style="{StaticResource TextBoxStyle}" Height="100" TextWrapping="Wrap" 
+            <TextBox x:Name="txtDescricao" Style="{StaticResource TextBoxStyle}" Height="70" TextWrapping="Wrap" 
                      AcceptsReturn="True" SpellCheck.IsEnabled="True"/>
             
             <Label Content="Categoria:" Style="{StaticResource LabelStyle}"/>
@@ -39,16 +41,16 @@
                 <ComboBoxItem Content="Equipamentos"/>
             </ComboBox>
 
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="0, 10, 0, 0">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
                 <Button Content="Limpar" Style="{StaticResource ButtonStyle}" Click="limpar"/>
                 <Button Content="Salvar" Style="{StaticResource ButtonStyle}" Click="salvar"/>
                 <Button Content="Excluir" Style="{StaticResource ButtonStyle}" Click="excluir"/>
             </StackPanel>
 
-            <ListView x:Name="lvProdutos" Height="130" MouseDoubleClick="editar">
+            <ListView x:Name="lvProdutos" Height="160" MouseDoubleClick="editar">
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding nome}" Width="200" />
+                        <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding nome}" Width="180" />
                         <GridViewColumn Header="Preco" DisplayMemberBinding="{Binding preco}" Width="100" />
                         <GridViewColumn Header="Descricao" DisplayMemberBinding="{Binding descricao}" Width="150" />
                         <GridViewColumn Header="Categoria" DisplayMemberBinding="{Binding categoria}" Width="150" />
