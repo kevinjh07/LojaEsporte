@@ -10,7 +10,6 @@
                 <MenuItem Header="Produtos">
                     <MenuItem Header="Cadastro" Click="cadastro"/>
                 </MenuItem>
-                <MenuItem Header="Atualizar" Click="atualizar"/>
             </Menu>
         </StackPanel>
     </Grid>

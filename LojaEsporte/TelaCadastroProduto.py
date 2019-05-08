@@ -7,12 +7,6 @@ class TelaCadastroProduto(Window):
     APPEND_TO_FILE = 'a'
     READ_FILE = 'r'
     WRITE = 'w'
-    produtos_map = {
-        0: 'Vestuario',
-        1: 'Calcados',
-        2: 'Acessorios',
-        3: 'Equipamentos'
-    }
 
 
     def __init__(self):
@@ -27,24 +21,47 @@ class TelaCadastroProduto(Window):
         self.txtDescricao.Text = ''
         self.cbCategoria.SelectedIndex = -1
         self.txtNome.Focus()
+        self.id = None
         pass
 
     
     def salvar(self, sender, e):
-        produto = Produto(self.txtNome.Text, self.txtPreco.Text, self.txtDescricao.Text, self.cbCategoria.SelectedIndex)
+        produto = Produto(self.txtNome.Text, self.txtPreco.Text, 
+                          self.txtDescricao.Text, self.cbCategoria.SelectedIndex)
         try:
             self.validar_produto(produto)
-            file = open(self.NOME_ARQUIVO, self.APPEND_TO_FILE)
-            file.write(produto.to_csv() + '\n')
-            file.flush()
-            file.close()
-            self.limpar(sender, e)
+            if (self.id == None):
+                self.salvar_arquivo(self.NOME_ARQUIVO, self.APPEND_TO_FILE, produto)
+                self.limpar(sender, e)
+            else:
+                self.lvProdutos.ItemsSource[self.id] = produto
+                self.lvProdutos.Items.Refresh()
+                itens = self.lvProdutos.Items
+                self.editar_arquivo(self.NOME_ARQUIVO, self.WRITE, itens)
+                self.limpar(sender, e)
+
+            self.listar()
             MessageBox.Show('Produto salvo!')
         except Exception as error:
             MessageBox.Show(error.message)
             pass
 
         pass
+
+    def salvar_arquivo(self, nome_arquivo, modo, produto):
+        file = open(nome_arquivo, modo)
+        file.write(produto.to_csv() + '\n')
+        file.flush()
+        file.close()
+
+
+    def editar_arquivo(self, nome_arquivo, modo, itens):
+        file = open(self.NOME_ARQUIVO, self.WRITE)
+        for i in itens:
+            file.write(i.to_csv() + '\n')
+
+        file.flush()
+        file.close()
 
 
     def validar_produto(self, produto):
@@ -67,7 +84,7 @@ class TelaCadastroProduto(Window):
             file = open(self.NOME_ARQUIVO, self.READ_FILE)
             for f in file:
                 split = f.split(',')
-                nome_produto = self.produtos_map[int(split[3].replace('\n', ''))]
+                nome_produto = split[3].replace('\n', '')
                 produto = Produto(split[0], split[1], split[2], nome_produto)
                 produtos.append(produto)
                 
@@ -87,23 +104,28 @@ class TelaCadastroProduto(Window):
         elif(MessageBox.Show('Realmente deseja remover este produto?', '', MessageBoxButton.YesNo) == MessageBoxResult.Yes):
             del self.lvProdutos.ItemsSource[index]
             self.lvProdutos.Items.Refresh()
+            self.id = None
+            itens = self.lvProdutos.Items
+            self.editar_arquivo(self.NOME_ARQUIVO, self.WRITE, itens)
+            self.listar()
         pass
-        
+    
     
     def editar(self, sender, e):
         index = self.lvProdutos.SelectedIndex
         if (index > -1):
             produto = self.lvProdutos.ItemsSource[index]
-            self.txtNome.Text = produto.nome
-            self.txtPreco.Text = produto.preco
-            self.txtDescricao.Text = produto.descricao
-            categoria = -1
-            for k, v in self.produtos_map.iteritems():
-                if (v == produto.categoria):
-                    categoria = k
-
-            self.cbCategoria.SelectedIndex = categoria
+            self.id = index
+            self.preencherCampos(produto)
         else:
             MessageBox.Show('Selecione um produto!')
-
         pass
+
+    
+    def preencherCampos(self, produto):
+        self.txtNome.Text = produto.nome
+        self.txtPreco.Text = produto.preco
+        self.txtDescricao.Text = produto.descricao
+        self.cbCategoria.SelectedIndex = int(produto.categoria)
+        pass
+
