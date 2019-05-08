@@ -9,7 +9,7 @@
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <IsWindowsApplication>True</IsWindowsApplication>
-    <InterpreterId>Global|VisualStudio|IronPython</InterpreterId>
+    <InterpreterId>Global|VisualStudio|IronPython.2.7.9</InterpreterId>
     <LaunchProvider>IronPython (.NET) launcher</LaunchProvider>
     <OutputPath>.</OutputPath>
     <Name>LojaEsporte</Name>
@@ -63,7 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="Global|VisualStudio|IronPython" />
+    <InterpreterReference Include="Global|VisualStudio|IronPython.2.7.9" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

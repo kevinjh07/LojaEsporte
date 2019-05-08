@@ -1,6 +1,6 @@
 ﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Tela de cadastro" Width="350" Height="420"
+        Title="Tela de cadastro" Width="640" Height="480"
         WindowStartupLocation="CenterScreen" 
         ResizeMode="NoResize">
     <Window.Resources>
@@ -20,7 +20,7 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" FocusManager.FocusedElement="{Binding ElementName=txtNome}">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" FocusManager.FocusedElement="{Binding ElementName=txtNome}">
             <Label Content="Nome:" Style="{StaticResource LabelStyle}"/>
             <TextBox x:Name="txtNome" Style="{StaticResource TextBoxStyle}"/>
 
@@ -28,7 +28,7 @@
             <TextBox x:Name="txtPreco" Style="{StaticResource TextBoxStyle}"/>
             
             <Label Content="Descrição:" Style="{StaticResource LabelStyle}"/>
-            <TextBox x:Name="txtDescricao" Style="{StaticResource TextBoxStyle}" Height="150" TextWrapping="Wrap" 
+            <TextBox x:Name="txtDescricao" Style="{StaticResource TextBoxStyle}" Height="100" TextWrapping="Wrap" 
                      AcceptsReturn="True" SpellCheck.IsEnabled="True"/>
             
             <Label Content="Categoria:" Style="{StaticResource LabelStyle}"/>
@@ -42,7 +42,19 @@
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="0, 10, 0, 0">
                 <Button Content="Limpar" Style="{StaticResource ButtonStyle}" Click="limpar"/>
                 <Button Content="Salvar" Style="{StaticResource ButtonStyle}" Click="salvar"/>
+                <Button Content="Excluir" Style="{StaticResource ButtonStyle}" Click="excluir"/>
             </StackPanel>
+
+            <ListView x:Name="lvProdutos" Height="130" MouseDoubleClick="editar">
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding nome}" Width="200" />
+                        <GridViewColumn Header="Preco" DisplayMemberBinding="{Binding preco}" Width="100" />
+                        <GridViewColumn Header="Descricao" DisplayMemberBinding="{Binding descricao}" Width="150" />
+                        <GridViewColumn Header="Categoria" DisplayMemberBinding="{Binding categoria}" Width="150" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </StackPanel>
     </Grid>
 </Window>

@@ -1,13 +1,21 @@
 import wpf
 from Produto import Produto
-from System.Windows import Window, MessageBox
+from System.Windows import Window, MessageBox, MessageBoxButton, MessageBoxResult
 
 class TelaCadastroProduto(Window):
     NOME_ARQUIVO = 'produtos.csv'
     APPEND_TO_FILE = 'a'
+    READ_FILE = 'r'
+    produtos_map = {
+        0: 'Vestuario',
+        1: 'Calcados',
+        2: 'Acessorios',
+        3: 'Equipamentos'
+    }
 
     def __init__(self):
         wpf.LoadComponent(self, 'TelaCadastroProduto.xaml')
+        self.listar()
 
 
     def limpar(self, sender, e):
@@ -53,4 +61,35 @@ class TelaCadastroProduto(Window):
 
         return result
 
+
+    def listar(self):
+        produtos = []
+        try:
+            file = open(self.NOME_ARQUIVO, self.READ_FILE)
+            for f in file:
+                split = f.split(',')
+                nome_produto = self.produtos_map[int(split[3].replace('\n', ''))]
+                produto = Produto(split[0], split[1], split[2], nome_produto)
+                produtos.append(produto)
+                
+            
+            file.close()
+        except IOError as error:
+            print(error)
+            MessageBox.Show('Ocorreu um erro ao tentar ler o arquivo.\n{0}'.format(error.strerror))
+
+        self.lvProdutos.ItemsSource = produtos
+
+    
+    def excluir(self, sender, e):
+        index = self.lvProdutos.SelectedIndex
+        if (index == -1):
+            MessageBox.Show('Selecione um produto!')
+        elif(MessageBox.Show('Realmente deseja remover este produto?', '', MessageBoxButton.YesNo) == MessageBoxResult.Yes):
+            del self.lvProdutos.ItemsSource[index]
+            self.lvProdutos.Items.Refresh()
+        pass
+        
+    def editar(self, sender, e):
+        pass
 
