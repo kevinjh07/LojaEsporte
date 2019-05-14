@@ -1,0 +1,52 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Tela de cadastro - Pessoa" Width="480" Height="480"
+        WindowStartupLocation="CenterScreen" 
+        ResizeMode="NoResize">
+    <Window.Resources>
+        <Style x:Key="LabelStyle" TargetType="Label">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="80"/>
+            <Setter Property="Margin" Value="10"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid>
+            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" 
+                        FocusManager.FocusedElement="{Binding ElementName=txtNome}"
+                        Margin="10">
+                <Label Content="Nome:" Style="{StaticResource LabelStyle}"/>
+                <TextBox x:Name="txtNome" Style="{StaticResource TextBoxStyle}"/>
+
+                <Label Content="E-mail:" Style="{StaticResource LabelStyle}"/>
+                <TextBox x:Name="txtEmail" Style="{StaticResource TextBoxStyle}"/>
+
+                <Label Content="CPF:" Style="{StaticResource LabelStyle}"/>
+                <TextBox x:Name="txtCpf" Style="{StaticResource TextBoxStyle}"/>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+                    <Button Content="Limpar" Style="{StaticResource ButtonStyle}" Click="limpar"/>
+                    <Button Content="Salvar" Style="{StaticResource ButtonStyle}" Click="salvar"/>
+                    <Button Content="Excluir" Style="{StaticResource ButtonStyle}" Click="excluir"/>
+                </StackPanel>
+                <ListView x:Name="lvPessoas" Height="250"   MouseDoubleClick="editar">
+                    <ListView.View>
+                        <GridView AllowsColumnReorder="False">
+                            <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding nome}" Width="150" />
+                            <GridViewColumn Header="E-mail" DisplayMemberBinding="{Binding email}" Width="150" />
+                            <GridViewColumn Header="CPF" DisplayMemberBinding="{Binding cpf}" Width="150" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

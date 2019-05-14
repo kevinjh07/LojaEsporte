@@ -8,7 +8,10 @@
         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Menu>
                 <MenuItem Header="Produtos">
-                    <MenuItem Header="Cadastro" Click="cadastro"/>
+                    <MenuItem Header="Cadastro" Click="cadastro_produto"/>
+                </MenuItem>
+                <MenuItem Header="Pessoas">
+                    <MenuItem Header="Cadastro" Click="cadastro_pessoa"/>
                 </MenuItem>
             </Menu>
         </StackPanel>

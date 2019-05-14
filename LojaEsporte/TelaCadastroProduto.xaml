@@ -1,6 +1,6 @@
 ﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Tela de cadastro" Width="640" Height="480"
+        Title="Tela de cadastro - Produtos" Width="640" Height="480"
         WindowStartupLocation="CenterScreen" 
         ResizeMode="NoResize">
     <Window.Resources>

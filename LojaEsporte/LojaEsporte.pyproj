@@ -25,7 +25,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="LojaEsporte.py" />
+    <Compile Include="Pessoa.py" />
     <Compile Include="Produto.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TelaCadastroPessoa.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TelaCadastroProduto.py">
@@ -34,6 +38,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="LojaEsporte.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="TelaCadastroPessoa.xaml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="TelaCadastroProduto.xaml">

@@ -2,7 +2,7 @@ import wpf
 
 from System.Windows import Application, Window, MessageBox
 from TelaCadastroProduto import TelaCadastroProduto
-from Produto import Produto
+from TelaCadastroPessoa import TelaCadastroPessoa
 
 class MyWindow(Window):
 
@@ -10,8 +10,14 @@ class MyWindow(Window):
         wpf.LoadComponent(self, 'LojaEsporte.xaml')
 
 
-    def cadastro(self, sender, e):
+    def cadastro_produto(self, sender, e):
         tela = TelaCadastroProduto()
+        tela.ShowDialog()
+        pass
+
+
+    def cadastro_pessoa(self, sender, e):
+        tela = TelaCadastroPessoa()
         tela.ShowDialog()
         pass
     
