@@ -74,8 +74,8 @@ class TelaCadastroPessoa(Window):
         if  matchobj is None:
             raise Exception('E-mail invalido!')
 
-        if (len(pessoa.cpf.strip()) == 0):
-            raise Exception('Informe um cpf!')
+        if  re.search(r'^[0-9]{11}$', pessoa.cpf) is None:
+            raise Exception('CPF invalido!')
 
 
     def listar(self):
