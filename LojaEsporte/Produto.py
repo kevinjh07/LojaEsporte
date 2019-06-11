@@ -3,7 +3,8 @@ class Produto(object):
     def __init__(self):
         pass
 
-    def __init__(self, nome, preco, descricao, categoria):
+    def __init__(self, id, nome, preco, descricao, categoria):
+        self.id = id
         self.nome = nome
         self.preco = preco
         self.descricao = descricao
