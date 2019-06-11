@@ -23,6 +23,7 @@
         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" 
                     FocusManager.FocusedElement="{Binding ElementName=txtNome}"
                     Margin="10">
+            <TextBox x:Name="txtId" Visibility="Hidden"/>
             <Label Content="Nome:" Style="{StaticResource LabelStyle}"/>
             <TextBox x:Name="txtNome" Style="{StaticResource TextBoxStyle}"/>
 

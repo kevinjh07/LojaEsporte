@@ -19,6 +19,7 @@ class TelaCadastroProduto(Window):
 
 
     def limpar(self, sender, e):
+        self.txtId.Text = None
         self.txtNome.Text = ''
         self.txtPreco.Text = ''
         self.txtDescricao.Text = ''
@@ -29,42 +30,36 @@ class TelaCadastroProduto(Window):
 
     
     def salvar(self, sender, e):
-        produto = Produto(None, self.txtNome.Text, self.txtPreco.Text, 
+        produto = Produto(self.txtId.Text, self.txtNome.Text, self.txtPreco.Text, 
                           self.txtDescricao.Text, self.cbCategoria.SelectedIndex)
-        connection = SqlConnection("Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=lojaesportes;Persist Security Info=True")
-        try:
-            connection.Open()
-            command = connection.CreateCommand()
-            command.CommandText = 'INSERT INTO produto (nome, descricao, preco, idCategoria) VALUES (@nome, @desc, @preco, @idCat)'
-            command.Parameters.Add(SqlParameter('nome', produto.nome))
-            command.Parameters.Add(SqlParameter('desc', produto.descricao))
-            command.Parameters.Add(SqlParameter('preco', produto.preco))
-            command.Parameters.Add(SqlParameter('idCat', produto.categoria))
+        if (produto.id == None):
+            connection = SqlConnection("Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=lojaesportes;Persist Security Info=True")
+            try:
+                connection.Open()
+                command = connection.CreateCommand()
+                command.CommandText = 'INSERT INTO produto (nome, descricao, preco, idCategoria) VALUES (@nome, @desc, @preco, @idCat)'
+                command.Parameters.Add(SqlParameter('nome', produto.nome))
+                command.Parameters.Add(SqlParameter('desc', produto.descricao))
+                command.Parameters.Add(SqlParameter('preco', produto.preco))
+                command.Parameters.Add(SqlParameter('idCat', produto.categoria))
 
-            resultado = command.ExecuteNonQuery()
-            self.listar()
-            MessageBox.Show('Produto salvo!')
-        except Exception as error:
-            MessageBox.Show(error.message)
-        finally:
-            connection.Close()
+                resultado = command.ExecuteNonQuery()
+                self.listar()
+                self.limpar(self, sender, e)
+                MessageBox.Show('Produto salvo!')
+            except Exception as error:
+                MessageBox.Show(error.message)
+            finally:
+                connection.Close()
+            pass
+        else:
+            self.editar(produto)
         pass
 
 
-    def salvar_arquivo(self, nome_arquivo, modo, produto):
-        file = open(nome_arquivo, modo)
-        file.write(produto.to_csv() + '\n')
-        file.flush()
-        file.close()
-
-
-    def editar_arquivo(self, nome_arquivo, modo, itens):
-        file = open(self.NOME_ARQUIVO, self.WRITE)
-        for i in itens:
-            file.write(i.to_csv() + '\n')
-
-        file.flush()
-        file.close()
+    def editar(self, produto):
+        MessageBox.Show('Editar!')
+        pass
 
 
     def validar_produto(self, produto):
@@ -128,7 +123,6 @@ class TelaCadastroProduto(Window):
                 MessageBox.Show('Ocorreu um erro ao tentar excluir o produto.\n{0}'.format(error.strerror))
             finally:
                 connection.Close()
-            #old
         pass
     
     
@@ -136,7 +130,6 @@ class TelaCadastroProduto(Window):
         index = self.lvProdutos.SelectedIndex
         if (index > -1):
             produto = self.lvProdutos.ItemsSource[index]
-            self.id = index
             self.preencherCampos(produto)
         else:
             MessageBox.Show('Selecione um produto!')
@@ -144,9 +137,10 @@ class TelaCadastroProduto(Window):
 
     
     def preencherCampos(self, produto):
+        self.txtId.Text = str(produto.id)
         self.txtNome.Text = produto.nome
-        self.txtPreco.Text = produto.preco
+        self.txtPreco.Text = str(produto.preco)
         self.txtDescricao.Text = produto.descricao
-        self.cbCategoria.SelectedIndex = int(produto.categoria)
+        self.cbCategoria.SelectedIndex = produto.categoria
         pass
 
