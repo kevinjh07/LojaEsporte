@@ -53,12 +53,33 @@ class TelaCadastroProduto(Window):
                 connection.Close()
             pass
         else:
-            self.editar(produto)
+            self.salvar_edicao(produto)
         pass
 
 
-    def editar(self, produto):
-        MessageBox.Show('Editar!')
+    def salvar_edicao(self, produto):
+        connection = SqlConnection("Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=lojaesportes;Persist Security Info=True")
+        try:
+            connection.Open()
+            command = connection.CreateCommand()
+            command.CommandText = 'UPDATE produto SET nome=@nome, descricao=@descricao, preco=@preco, idCategoria=@categoria WHERE id=@id'
+            command.Parameters.Add(SqlParameter('nome', produto.nome))
+            command.Parameters.Add(SqlParameter('descricao', produto.descricao))
+            command.Parameters.Add(SqlParameter('preco', produto.preco))
+            command.Parameters.Add(SqlParameter('categoria', int(produto.categoria)))
+            command.Parameters.Add(SqlParameter('id', int(produto.id)))
+
+            resultado = command.ExecuteNonQuery()
+            if (resultado > 0):
+                self.listar()
+                self.limpar(self, sender, e)
+                MessageBox.Show('Produto editado!')
+            else:
+                MessageBox.Show('Não foi possivel editar o produto!')
+        except Exception as error:
+            MessageBox.Show(error.message)
+        finally:
+            connection.Close()
         pass
 
 
