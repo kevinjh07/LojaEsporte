@@ -32,7 +32,7 @@ class TelaCadastroProduto(Window):
     def salvar(self, sender, e):
         produto = Produto(self.txtId.Text, self.txtNome.Text, self.txtPreco.Text, 
                           self.txtDescricao.Text, self.cbCategoria.SelectedIndex)
-        if (produto.id == None):
+        if (produto.id == None or produto.id == ''):
             connection = SqlConnection("Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=lojaesportes;Persist Security Info=True")
             try:
                 connection.Open()
@@ -45,7 +45,7 @@ class TelaCadastroProduto(Window):
 
                 resultado = command.ExecuteNonQuery()
                 self.listar()
-                self.limpar(self, sender, e)
+                self.limpar(sender, e)
                 MessageBox.Show('Produto salvo!')
             except Exception as error:
                 MessageBox.Show(error.message)
@@ -53,11 +53,11 @@ class TelaCadastroProduto(Window):
                 connection.Close()
             pass
         else:
-            self.salvar_edicao(produto)
+            self.salvar_edicao(produto, sender, e)
         pass
 
 
-    def salvar_edicao(self, produto):
+    def salvar_edicao(self, produto, sender, e):
         connection = SqlConnection("Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=lojaesportes;Persist Security Info=True")
         try:
             connection.Open()
@@ -66,18 +66,15 @@ class TelaCadastroProduto(Window):
             command.Parameters.Add(SqlParameter('nome', produto.nome))
             command.Parameters.Add(SqlParameter('descricao', produto.descricao))
             command.Parameters.Add(SqlParameter('preco', produto.preco))
-            command.Parameters.Add(SqlParameter('categoria', int(produto.categoria)))
-            command.Parameters.Add(SqlParameter('id', int(produto.id)))
+            command.Parameters.Add(SqlParameter('categoria', produto.categoria))
+            command.Parameters.Add(SqlParameter('id', produto.id))
 
             resultado = command.ExecuteNonQuery()
-            if (resultado > 0):
-                self.listar()
-                self.limpar(self, sender, e)
-                MessageBox.Show('Produto editado!')
-            else:
-                MessageBox.Show('Não foi possivel editar o produto!')
+            self.listar()
+            self.limpar(sender, e)
+            MessageBox.Show('Produto editado!')
         except Exception as error:
-            MessageBox.Show(error.message)
+            MessageBox.Show('Não foi possivel editar o produto!')
         finally:
             connection.Close()
         pass
@@ -108,9 +105,9 @@ class TelaCadastroProduto(Window):
             reader = command.ExecuteReader()
             
             while reader.Read():
-                produto = Produto(reader['id'], reader['nome'], 
-                            reader['preco'], reader['descricao'],
-                            reader['idCategoria'])
+                produto = Produto(int(reader['id']), reader['nome'], 
+                            float(reader['preco']), reader['descricao'],
+                            int(reader['idCategoria']))
                 produtos.append(produto)
             self.lvProdutos.ItemsSource = produtos
         except Exception as error:
@@ -134,14 +131,10 @@ class TelaCadastroProduto(Window):
                 produto = self.lvProdutos.ItemsSource[index]
                 command.Parameters.Add(SqlParameter('id', produto.id))
                 resultado = command.ExecuteNonQuery()
-                if (resultado > 0):
-                    self.listar()
-                    MessageBox.Show('Produto removido!')
-                else:
-                    MessageBox.Show('O produto não pode ser removido')
-
+                self.listar()
+                MessageBox.Show('Produto removido!')
             except Exception as error:
-                MessageBox.Show('Ocorreu um erro ao tentar excluir o produto.\n{0}'.format(error.strerror))
+                MessageBox.Show('O produto não pode ser removido')
             finally:
                 connection.Close()
         pass
