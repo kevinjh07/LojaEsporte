@@ -7,11 +7,7 @@ clr.AddReference('System.Data')
 from System.Data.SqlClient import SqlConnection, SqlParameter
 
 class TelaCadastroPessoa(Window):
-    NOME_ARQUIVO = 'pessoas.csv'
-    APPEND_TO_FILE = 'a'
-    READ_FILE = 'r'
-    WRITE = 'w'
-
+    
     def __init__(self):
         wpf.LoadComponent(self, 'TelaCadastroPessoa.xaml')
         self.id = None

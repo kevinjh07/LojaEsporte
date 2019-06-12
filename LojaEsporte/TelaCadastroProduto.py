@@ -6,11 +6,6 @@ clr.AddReference('System.Data')
 from System.Data.SqlClient import SqlConnection, SqlParameter
 
 class TelaCadastroProduto(Window):
-    NOME_ARQUIVO = 'produtos.csv'
-    APPEND_TO_FILE = 'a'
-    READ_FILE = 'r'
-    WRITE = 'w'
-
 
     def __init__(self):
         wpf.LoadComponent(self, 'TelaCadastroProduto.xaml')
