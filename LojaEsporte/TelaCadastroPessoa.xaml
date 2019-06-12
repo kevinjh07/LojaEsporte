@@ -24,6 +24,7 @@
             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" 
                         FocusManager.FocusedElement="{Binding ElementName=txtNome}"
                         Margin="10">
+                <TextBox x:Name="txtId" Visibility="Hidden"/>
                 <Label Content="Nome:" Style="{StaticResource LabelStyle}"/>
                 <TextBox x:Name="txtNome" Style="{StaticResource TextBoxStyle}"/>
 
@@ -40,6 +41,7 @@
                 <ListView x:Name="lvPessoas" Height="250"   MouseDoubleClick="editar">
                     <ListView.View>
                         <GridView AllowsColumnReorder="False">
+                            <GridViewColumn DisplayMemberBinding="{Binding id}" Width="0"/>
                             <GridViewColumn Header="Nome" DisplayMemberBinding="{Binding nome}" Width="150" />
                             <GridViewColumn Header="E-mail" DisplayMemberBinding="{Binding email}" Width="150" />
                             <GridViewColumn Header="CPF" DisplayMemberBinding="{Binding cpf}" Width="150" />

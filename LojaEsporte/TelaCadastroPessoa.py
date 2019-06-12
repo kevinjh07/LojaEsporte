@@ -1,8 +1,10 @@
-import wpf
-import re
+# -*- coding: utf-8 -*-
+import wpf, clr, re
 
 from Pessoa import Pessoa
 from System.Windows import Window, MessageBox, MessageBoxButton, MessageBoxResult
+clr.AddReference('System.Data')
+from System.Data.SqlClient import SqlConnection, SqlParameter
 
 class TelaCadastroPessoa(Window):
     NOME_ARQUIVO = 'pessoas.csv'
@@ -17,6 +19,7 @@ class TelaCadastroPessoa(Window):
 
     
     def limpar(self, sender, e):
+        self.txtId.Text = None
         self.txtNome.Text = ''
         self.txtEmail.Text = ''
         self.txtCpf.Text = ''
@@ -25,41 +28,51 @@ class TelaCadastroPessoa(Window):
         pass
 
     def salvar(self, sender, e):
-        pessoa = Pessoa(self.txtNome.Text, self.txtEmail.Text, self.txtCpf.Text)
-        try:
-            self.validar_pessoa(pessoa)
-            if (self.id == None):
-                self.salvar_arquivo(self.NOME_ARQUIVO, self.APPEND_TO_FILE, pessoa)
-                self.limpar(sender, e)
-            else:
-                self.lvPessoas.ItemsSource[self.id] = pessoa
-                self.lvPessoas.Items.Refresh()
-                itens = self.lvPessoas.Items
-                self.editar_arquivo(self.NOME_ARQUIVO, self.WRITE, itens)
-                self.limpar(sender, e)
+        pessoa = Pessoa(self.txtId.Text, self.txtNome.Text, self.txtEmail.Text, self.txtCpf.Text)
+        if (pessoa.id == None or pessoa.id == ''):
+            connection = SqlConnection("Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=lojaesportes;Persist Security Info=True")
+            try:
+                connection.Open()
+                command = connection.CreateCommand()
+                command.CommandText = 'INSERT INTO pessoa (nome, email, cpf) VALUES (@nome, @email, @cpf)'
+                command.Parameters.Add(SqlParameter('nome', pessoa.nome))
+                command.Parameters.Add(SqlParameter('email', pessoa.email))
+                command.Parameters.Add(SqlParameter('cpf', pessoa.cpf))
 
-            self.listar()
-            MessageBox.Show('Pessoa salvo!')
-        except Exception as error:
-            MessageBox.Show(error.message)
+                resultado = command.ExecuteNonQuery()
+                self.limpar(sender, e)
+                self.listar()
+                MessageBox.Show('Pessoa salva!')
+            except Exception as error:
+                MessageBox.Show('Erro ao salvar a pessoa!')
+            finally:
+                connection.Close()
             pass
-
+        else:
+            self.salvar_edicao(pessoa, sender, e)
         pass
 
-    def salvar_arquivo(self, nome_arquivo, modo, pessoa):
-        file = open(nome_arquivo, modo)
-        file.write(pessoa.to_csv() + '\n')
-        file.flush()
-        file.close()
 
+    def salvar_edicao(self, pessoa, sender, e):
+        connection = SqlConnection("Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=lojaesportes;Persist Security Info=True")
+        try:
+            connection.Open()
+            command = connection.CreateCommand()
+            command.CommandText = 'UPDATE pessoa SET nome=@nome, email=@email, cpf=@cpf WHERE id=@id'
+            command.Parameters.Add(SqlParameter('nome', pessoa.nome))
+            command.Parameters.Add(SqlParameter('email', pessoa.email))
+            command.Parameters.Add(SqlParameter('cpf', pessoa.cpf))
+            command.Parameters.Add(SqlParameter('id', pessoa.id))
 
-    def editar_arquivo(self, nome_arquivo, modo, itens):
-        file = open(self.NOME_ARQUIVO, self.WRITE)
-        for i in itens:
-            file.write(i.to_csv() + '\n')
-
-        file.flush()
-        file.close()
+            resultado = command.ExecuteNonQuery()
+            self.listar()
+            self.limpar(sender, e)
+            MessageBox.Show('Pessoa editada!')
+        except Exception as error:
+            MessageBox.Show('Não foi possivel editar a Pessoa!')
+        finally:
+            connection.Close()
+        pass
 
 
     def validar_pessoa(self, pessoa):
@@ -80,20 +93,24 @@ class TelaCadastroPessoa(Window):
 
     def listar(self):
         pessoas = []
+        connection = SqlConnection("Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=lojaesportes;Persist Security Info=True")
         try:
-            file = open(self.NOME_ARQUIVO, self.READ_FILE)
-            for f in file:
-                split = f.split(',')
-                pessoa = Pessoa(split[0], split[1],  split[2].replace('\n', ''))
-                pessoas.append(pessoa)
-                
+            connection.Open()
+            command = connection.CreateCommand()
+            command.CommandText = 'SELECT id, nome, email, cpf FROM pessoa'
             
-            file.close()
-        except IOError as error:
-            print(error)
-            MessageBox.Show('Ocorreu um erro ao tentar ler o arquivo.\n{0}'.format(error.strerror))
-
-        self.lvPessoas.ItemsSource = pessoas
+            reader = command.ExecuteReader()
+            
+            while reader.Read():
+                pessoa = Pessoa(int(reader['id']), reader['nome'], 
+                            reader['email'], reader['cpf'])
+                pessoas.append(pessoa)
+            self.lvPessoas.ItemsSource = pessoas
+        except Exception as error:
+            MessageBox.Show('Ocorreu um erro ao listar as pessoas!')
+        finally:
+            connection.Close()
+        pass
 
     
     def excluir(self, sender, e):
@@ -101,12 +118,20 @@ class TelaCadastroPessoa(Window):
         if (index == -1):
             MessageBox.Show('Selecione uma pessoa!')
         elif(MessageBox.Show('Realmente deseja remover esta pessoa?', '', MessageBoxButton.YesNo) == MessageBoxResult.Yes):
-            del self.lvPessoas.ItemsSource[index]
-            self.lvPessoas.Items.Refresh()
-            self.id = None
-            itens = self.lvPessoas.Items
-            self.editar_arquivo(self.NOME_ARQUIVO, self.WRITE, itens)
-            self.listar()
+            connection = SqlConnection("Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=lojaesportes;Persist Security Info=True")
+            try:
+                connection.Open()
+                command = connection.CreateCommand()
+                command.CommandText = 'DELETE FROM pessoa WHERE id = @id'
+                pessoa = self.lvPessoas.ItemsSource[index]
+                command.Parameters.Add(SqlParameter('id', pessoa.id))
+                resultado = command.ExecuteNonQuery()
+                self.listar()
+                MessageBox.Show('Pessoa removida!')
+            except Exception as error:
+                MessageBox.Show('A pessoa não pode ser removida!')
+            finally:
+                connection.Close()
         pass
     
     
@@ -122,6 +147,7 @@ class TelaCadastroPessoa(Window):
 
     
     def preencherCampos(self, pessoa):
+        self.txtId.Text = str(pessoa.id)
         self.txtNome.Text = pessoa.nome
         self.txtEmail.Text = pessoa.email
         self.txtCpf.Text = pessoa.cpf
