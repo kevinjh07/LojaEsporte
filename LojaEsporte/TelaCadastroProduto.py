@@ -12,7 +12,17 @@ class TelaCadastroProduto(Window):
     def __init__(self):
         wpf.LoadComponent(self, 'TelaCadastroProduto.xaml')
         self.id = None
+        self.create_file_if_not_exists(self.NOME_ARQUIVO)
         self.listar()
+
+    
+    def create_file_if_not_exists(self, path):
+        try:
+            f = open(path)
+            f.close()
+        except IOError:
+            f = open(path, 'w')
+            f.close()
 
 
     def limpar(self, sender, e):
